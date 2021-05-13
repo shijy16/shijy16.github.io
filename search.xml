@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>CTFer配套题目解题记录</title>
-    <url>/2021/05/13/CTF/CTFer%E9%85%8D%E5%A5%97%E9%A2%98%E7%9B%AE%E8%A7%A3%E9%A2%98%E8%AE%B0%E5%BD%95/</url>
-    <content><![CDATA[<p><object data="./answers.pdf" type="application/pdf" width="100%" height="900px">This browser does not support PDFs. Please download the PDF to view it: <a href="/index.pdf">Download PDF</a><br></object></p>
+    <title>CTF学习过程中的题目WP</title>
+    <url>/2021/05/13/CTF/CTF%E5%AD%A6%E4%B9%A0%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E9%A2%98%E7%9B%AEWP/</url>
+    <content><![CDATA[<p><object data="./writeup.pdf" type="application/pdf" width="100%" height="900px">This browser does not support PDFs. Please download the PDF to view it: <a href="/index.pdf">Download PDF</a><br></object></p>
 <p>文中latex源码、提到的题目、源码、writeup均位于<a href="https://github.com/shijy16/learn-ctf%E3%80%82">https://github.com/shijy16/learn-ctf。</a></p>
 <p>CTF学习系列文章:</p>
 <ul>
@@ -20,9 +20,9 @@
       </tags>
   </entry>
   <entry>
-    <title>CTF学习过程中的题目WP</title>
-    <url>/2021/05/13/CTF/CTF%E5%AD%A6%E4%B9%A0%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E9%A2%98%E7%9B%AEWP/</url>
-    <content><![CDATA[<p><object data="./writeup.pdf" type="application/pdf" width="100%" height="900px">This browser does not support PDFs. Please download the PDF to view it: <a href="/index.pdf">Download PDF</a><br></object></p>
+    <title>CTFer配套题目解题记录</title>
+    <url>/2021/05/13/CTF/CTFer%E9%85%8D%E5%A5%97%E9%A2%98%E7%9B%AE%E8%A7%A3%E9%A2%98%E8%AE%B0%E5%BD%95/</url>
+    <content><![CDATA[<p><object data="./answers.pdf" type="application/pdf" width="100%" height="900px">This browser does not support PDFs. Please download the PDF to view it: <a href="/index.pdf">Download PDF</a><br></object></p>
 <p>文中latex源码、提到的题目、源码、writeup均位于<a href="https://github.com/shijy16/learn-ctf%E3%80%82">https://github.com/shijy16/learn-ctf。</a></p>
 <p>CTF学习系列文章:</p>
 <ul>
