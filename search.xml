@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>Hexo博客搭建</title>
+    <url>/2021/05/13/%E9%85%8D%E7%BD%AE/Hexo%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/</url>
+    <content><![CDATA[<h2 id="Hexo环境安装"><a href="#Hexo环境安装" class="headerlink" title="Hexo环境安装"></a>Hexo环境安装</h2><h3 id="安装node-js"><a href="#安装node-js" class="headerlink" title="安装node.js"></a>安装node.js</h3><p>下载安装<a href="https://nodejs.org/">node.js</a></p>
+<p>更换国内源:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">npm config set registry https://registry.npm.taobao.org</span><br></pre></td></tr></table></figure>
+
+<h3 id="安装Hexo"><a href="#安装Hexo" class="headerlink" title="安装Hexo"></a>安装Hexo</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mkdir blog &amp;&amp; cd blog	#创建hexo目录</span><br><span class="line">npm i hexo-cli -g		#安装hexo</span><br><span class="line">hexo -v					#验证是否成功</span><br><span class="line">hexo init				#初始化</span><br><span class="line">npm install				#安装必备库</span><br></pre></td></tr></table></figure>
+
+<h3 id="网页基本操作"><a href="#网页基本操作" class="headerlink" title="网页基本操作"></a>网页基本操作</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo g				#生成网页</span><br><span class="line">hexo s				#创建本地服务器</span><br><span class="line">hexo clean			#clean</span><br><span class="line">hexo new post &quot;article title&quot;	#创建新文章</span><br></pre></td></tr></table></figure>
+
+<p>至此，hexo基本环境安装完成。</p>
+<h2 id="next主题安装和背景设置"><a href="#next主题安装和背景设置" class="headerlink" title="next主题安装和背景设置"></a>next主题安装和背景设置</h2><h3 id="安装next"><a href="#安装next" class="headerlink" title="安装next"></a>安装next</h3><p>下载next主题:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git clone https://github.com/theme-next/hexo-theme-next themes/next</span><br></pre></td></tr></table></figure>
+
+<p>在<code>_config.yml</code>中修改<code>theme</code>属性为:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">theme: next</span><br></pre></td></tr></table></figure>
+
+<h3 id="设置背景图片"><a href="#设置背景图片" class="headerlink" title="设置背景图片"></a>设置背景图片</h3><ul>
+<li>将背景图片<code>bg.jpg</code>复制到<code>themes\next\source\images</code>中</li>
+</ul>
+<p>在<code>themes/next/_config.yml</code>中取消注释:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">style: source/_data/styles.styl</span><br></pre></td></tr></table></figure>
+
+<p>并在根目录下的<code>source</code>文件夹创建<code>_data/styles.styl</code>，在<code>styles.styl</code>中添加:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">body &#123;</span><br><span class="line"> 	background:url(/images/bg.jpg);</span><br><span class="line"> 	background-repeat: no-repeat;</span><br><span class="line">    background-attachment:fixed;</span><br><span class="line">    background-position:50% 50%;</span><br><span class="line">    background-size: cover;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>背景图片会铺满整个页面</p>
+<h3 id="设置文章透明度"><a href="#设置文章透明度" class="headerlink" title="设置文章透明度"></a>设置文章透明度</h3><p>默认所有内容背景透明，看不清字，所以需要设置文章背景透明度:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">.main-inner &#123; </span><br><span class="line">    margin-top: 60px;</span><br><span class="line">    padding: 60px 60px 60px 60px;</span><br><span class="line">    background: rgba(255,255,255,0.9);</span><br><span class="line">    min-height: 500px;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//博客内容透明化</span><br><span class="line">.content-wrap&#123;</span><br><span class="line">  opacity: 0.9;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//侧边框的透明度设置</span><br><span class="line">.sidebar &#123;</span><br><span class="line">  opacity: 0.9;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//菜单栏的透明度设置</span><br><span class="line">.header-inner &#123;</span><br><span class="line">  background: rgba(255,255,255,0.9);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//搜索框（local-search）的透明度设置</span><br><span class="line">.popup &#123;</span><br><span class="line">  opacity: 0.9;</span><br><span class="line">&#125;</span><br><span class="line">.footer-inner &#123;</span><br><span class="line">  background: rgba(255,255,255,0.9);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="主题相关设置"><a href="#主题相关设置" class="headerlink" title="主题相关设置"></a>主题相关设置</h2><h3 id="修改整体scheme"><a href="#修改整体scheme" class="headerlink" title="修改整体scheme"></a>修改整体scheme</h3><p>默认Muse有点丑，在<code>next</code>文件夹下的<code>config</code>中改为其他<code>scheme</code>:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Schemes</span><br><span class="line"># scheme: Muse</span><br><span class="line"># scheme: Mist</span><br><span class="line">scheme: Pisces</span><br><span class="line"># scheme: Gemini</span><br></pre></td></tr></table></figure>
+
+<p>这里直接修改后在本地看起来没问题，部署到<code>github.io</code>上侧边栏就会出错，查了一下发现是设置里自带了<code>sidebar</code>属性，两个会冲突，所以修改<code>next</code>的配置文件中的<code>sidebar</code>为<code>hide</code>:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sidebar:</span><br><span class="line">  display: hide</span><br></pre></td></tr></table></figure>
+
+<p>问题解决。</p>
+<p>因为该scheme自带了一个<code>content-wraper</code>，所以透明度需要修改，把 <code>themes\next\source\css\_schemes\Pisces\_layout.styl</code> 文件 <code>.content-wrap</code> 标签下 <code>background: white</code>改为完全透明:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">background: rgba(255,255,255,0);</span><br></pre></td></tr></table></figure>
+
+<p>然后根目录下<code>source/_data/_styles.styl</code>中的透明度设置:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">.main-inner &#123; </span><br><span class="line">    margin-top: 60px;</span><br><span class="line">    padding: 60px 60px 60px 60px;</span><br><span class="line">    background: rgba(255,255,255,0.9);</span><br><span class="line">    min-height: 500px;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//侧边框的透明度设置</span><br><span class="line">.sidebar &#123;</span><br><span class="line">  opacity: 0.9;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//菜单栏的透明度设置</span><br><span class="line">.header-inner &#123;</span><br><span class="line">  background: rgba(255,255,255,0.9);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//搜索框（local-search）的透明度设置</span><br><span class="line">.popup &#123;</span><br><span class="line">  opacity: 0.9;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">.footer-inner &#123;</span><br><span class="line">  background: rgba(255,255,255,0.8);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="添加分类和标签"><a href="#添加分类和标签" class="headerlink" title="添加分类和标签"></a>添加分类和标签</h3><p>创建分类和标签页面:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo new page categories</span><br><span class="line">hexo new page tags</span><br></pre></td></tr></table></figure>
+
+<p>分别编辑 <code>categories/index.md</code> 和 <code>tags/index.md</code> 文件，将内容替换为：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">---</span><br><span class="line">title: 分类</span><br><span class="line">date: 2021-05-10 12:22:12</span><br><span class="line">type: &quot;categories&quot;</span><br><span class="line">---</span><br></pre></td></tr></table></figure>
+
+<p>和</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">---</span><br><span class="line">title: 标签</span><br><span class="line">date: 2021-05-10 12:21:48</span><br><span class="line">type: &quot;tags&quot;</span><br><span class="line">---</span><br></pre></td></tr></table></figure>
+
+<p>配置<code>themes/_config.yml</code>中的菜单属性:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">menu:</span><br><span class="line">  home: / || home</span><br><span class="line">  #about: /about/ || user</span><br><span class="line">  tags: /tags/ || tags</span><br><span class="line">  categories: /categories/ || th</span><br><span class="line">  archives: /archives/ || archive</span><br><span class="line">  #schedule: /schedule/ || calendar</span><br><span class="line">  #sitemap: /sitemap.xml || sitemap</span><br><span class="line">  #commonweal: /404/ || heartbeat</span><br></pre></td></tr></table></figure>
+
+<p>完成后就可以设置文章的属性和标签了:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">title: Hexo博客搭建</span><br><span class="line">date: 2021-05-11 22:38:54</span><br><span class="line">tags: 教程</span><br><span class="line">categories: 其他</span><br></pre></td></tr></table></figure>
+
+<p>多标签:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tags: [教程,其他]</span><br></pre></td></tr></table></figure>
+
+<h3 id="限制目录深度标题"><a href="#限制目录深度标题" class="headerlink" title="限制目录深度标题"></a>限制目录深度标题</h3><p>修改<code>themes/_config.yml</code>中的<code>max_depth</code>属性为<code>3</code></p>
+<h3 id="侧边栏社交信息"><a href="#侧边栏社交信息" class="headerlink" title="侧边栏社交信息"></a>侧边栏社交信息</h3><p>修改<code>themes/_config.yml</code>中的<code>social</code>属性</p>
+<h3 id="首页不显示全文"><a href="#首页不显示全文" class="headerlink" title="首页不显示全文"></a>首页不显示全文</h3><p>在每个文章头添加<code>description</code>属性。</p>
+<h3 id="更改网站图标"><a href="#更改网站图标" class="headerlink" title="更改网站图标"></a>更改网站图标</h3><p>找一张想做图标的图，在<a href="http://www.bitbug.net/">bitbug</a>里生成<code>16x16</code>和<code>32x32</code>的各一张，然后放到<code>next</code>里面的<code>source/images</code>文件下。</p>
+<p>然后配置next主题的<code>config</code>文件，修改favicon:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">favicon:</span><br><span class="line">small: /images/my16x16.png</span><br><span class="line">medium: /images/my32x32.png</span><br></pre></td></tr></table></figure>
+
+<h3 id="更改个人头像"><a href="#更改个人头像" class="headerlink" title="更改个人头像"></a>更改个人头像</h3><p>把放到<code>next</code>里面的<code>source/images</code>文件下，然后配置next主题的<code>config</code>文件，修改avatar:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">avatar:</span><br><span class="line">  # Replace the default image and set the url here.</span><br><span class="line">  url: /images/avatar.jpg</span><br></pre></td></tr></table></figure>
+
+<h5 id="更改网站签名"><a href="#更改网站签名" class="headerlink" title="更改网站签名"></a>更改网站签名</h5><p>在根部录下的<code>config</code>文件中，修改<code>description</code>:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">description: &#x27;I am a noob.&#x27;</span><br></pre></td></tr></table></figure>
+
+<h2 id="功能相关设置"><a href="#功能相关设置" class="headerlink" title="功能相关设置"></a>功能相关设置</h2><h3 id="添加本地搜索功能"><a href="#添加本地搜索功能" class="headerlink" title="添加本地搜索功能"></a>添加本地搜索功能</h3><p>在hexo的根目录下执行命令：<code>npm install hexo-generator-searchdb --save</code></p>
+<p>在根目录下的<code>_config.yml</code>文件中添加配置：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">search:</span><br><span class="line">  path: search.xml</span><br><span class="line">  field: post</span><br><span class="line">  format: html</span><br><span class="line">  limit: 10000</span><br></pre></td></tr></table></figure>
+
+<p>在修改<code>next</code>目录下的<code>config</code>文件中的<code>local_search</code>为<code>enable</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">local_search:</span><br><span class="line">  enable: true</span><br></pre></td></tr></table></figure>
+
+<h3 id="访客统计"><a href="#访客统计" class="headerlink" title="访客统计"></a>访客统计</h3><p>修改<code>themes/_config.yml</code>中的<code>busuanzi_count</code>为<code>enable</code></p>
+<h3 id="添加评论功能"><a href="#添加评论功能" class="headerlink" title="添加评论功能"></a>添加评论功能</h3><h5 id="Valine"><a href="#Valine" class="headerlink" title="Valine"></a>Valine</h5><p>使用<strong>Valine 评论系统</strong>，访客不需要登录即可评论，而且支持markdown。</p>
+<p>首先注册一个账号:<a href="https://leancloud.cn/dashboard/login.html#/signin">LeanCloud官网登录入口</a>。注册后访问控制台，创建开发版应用，在设置中获取 <code>App ID</code> 和 <code>App Key</code>。在next的config文件中，修改<code>valine</code>相关配置:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Valine.</span><br><span class="line"># You can get your appid and appkey from https://leancloud.cn</span><br><span class="line"># more info please open https://valine.js.org</span><br><span class="line">valine:</span><br><span class="line">  enable: true # 是否开启</span><br><span class="line">  appid:   # 上一步获取的 App ID</span><br><span class="line">  appkey:  # 上一步获取的 App Key</span><br><span class="line">  notify: false # 新留言是否需要通知 https://github.com/xCss/Valine/wiki</span><br><span class="line">  verify: false # 是否需要验证，验证比较反人类建议false关闭</span><br><span class="line">  placeholder: 请在此输入您的留言 # 默认留言框内的文字</span><br><span class="line">  avatar: mm # 默认头像</span><br><span class="line">  guest_info: nick,mail # 默认留言框的头部需要访问者输入的信息</span><br><span class="line">  pageSize: 10 # pagination size #默认单页的留言条数</span><br></pre></td></tr></table></figure>
+
+<h5 id="gitalk"><a href="#gitalk" class="headerlink" title="gitalk"></a>gitalk</h5><p>后面了解到还有gitalk评论系统，要求用github账户登录评论，基于仓库的issue实现，感觉这个更靠谱，就改成了这个。</p>
+<p>注册gitalk应用，到[github申请页面](https : //github.com/settings/applications/new)申请，名称和描述随意填，两个url填自己博客地址，我的是<code>https://blog.shijy16.cn</code>，注册后，获得ID和Secret。</p>
+<p>在next的config文件中，修改<code>gitalk</code>相关配置:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">gitalk:</span><br><span class="line">  enable: true</span><br><span class="line">  github_id:  # GitHub repo owner</span><br><span class="line">  repo:  # Repository name to store issues</span><br><span class="line">  client_id: # GitHub Application Client ID</span><br><span class="line">  client_secret: # GitHub Application Client Secret</span><br><span class="line">  admin_user: # GitHub repo owner and collaborators, only these guys can initialize gitHub issues</span><br><span class="line">  distraction_free_mode: true # Facebook-like distraction free mode</span><br><span class="line">  # Gitalk&#x27;s display language depends on user&#x27;s browser or system environment</span><br><span class="line">  # If you want everyone visiting your site to see a uniform language, you can set a force language value</span><br><span class="line">  # Available values: en | es-ES | fr | ru | zh-CN | zh-TW</span><br><span class="line">  language:</span><br></pre></td></tr></table></figure>
+
+<p>repo一般就直接填博客仓库名称就好了，<code>github_id</code>、<code>admin_user</code>就填自己的github id。然后记得把其他评论配置disable。</p>
+<p>最后部署后，自己进入博客页面，查看文章末尾评论，应该会提示<code>issues not initailized</code>，点进去授权一下就可以了，在博客仓库里面的issue中看到gitalk自动创建的issue就代表配置成功。</p>
+<h3 id="部署到github"><a href="#部署到github" class="headerlink" title="部署到github"></a>部署到github</h3><p>修改根目录下的配置文件最后一行的配置为:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repository: https://github.com/yourname/yourname.github.io</span><br><span class="line">  branch: main</span><br></pre></td></tr></table></figure>
+
+<p>安装部署插件:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">npm i hexo-deployer-git</span><br></pre></td></tr></table></figure>
+
+<p>部署:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo d</span><br></pre></td></tr></table></figure>
+
+<h3 id="插入PDF"><a href="#插入PDF" class="headerlink" title="插入PDF"></a>插入PDF</h3><p>因为我用latex写的大部分笔记，所以有在网页中插入pdf这个需求。</p>
+<p>在hexo中插入pdf有两个方案，第一种是用插件，我失败了，这里就不讲了(不管插入本地PDF还是远程PDF)。</p>
+<p>这里讲第二种方案，用html。</p>
+<p>首先在要插入文章的同级目录中创建文章同名文件夹，然后把PDF放进去:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-CTF学习笔记</span><br><span class="line">	-note.pdf</span><br><span class="line">-CTF学习笔记.md</span><br></pre></td></tr></table></figure>
+
+<p>然后在markdown中插入:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;object data=&quot;./note.pdf&quot; type=&quot;application/pdf&quot; width=&quot;100%&quot; height=&quot;900px&quot;&gt;This browser does not support PDFs. Please download the PDF to view it: &lt;a href=&quot;/index.pdf&quot;&gt;Download PDF&lt;/a&gt;</span><br><span class="line">&lt;/object&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这里我还把根目录的<code>config</code>文件中的url属性改为了:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">url: https://shijy16.github.io</span><br></pre></td></tr></table></figure>
+
+<p>然后就可以在博客中正常预览PDF了。</p>
+<blockquote>
+<p>PS: 尝试用远程PDF链接失败，用其他仓库中的PDF链接时，会直接弹出下载窗口，无法直接预览。</p>
+<p>要直接预览的话需要为仓库创建github pages，但这样之后又不能方便更新了，和把pdf放到github.io仓库一样。</p>
+<p>有解决方案的同学可以通过email联系我或者在github中提issue。</p>
+</blockquote>
+<h3 id="个人域名重定向和HTTPS"><a href="#个人域名重定向和HTTPS" class="headerlink" title="个人域名重定向和HTTPS"></a>个人域名重定向和HTTPS</h3><p>首先在腾讯、阿里等域名代理商购买一个个人域名，我购买的是<code>shijy16.cn</code>，接下来对域名进行设置，使<code>blog.shijy16.cn</code>被解析到<code>shijy16.github.io</code>:</p>
+<ul>
+<li>添加CNAME记录，在域名控制台添加CNAME，将<code>blog.shijy16.cn</code>指向<code>shijy16.github.io</code></li>
+<li>修改github pages设置，把<code>Custom domain</code>设为``blog.shijy16.cn`</li>
+</ul>
+<p>一段时间后可以正常从<code>blog.shijy16.cn</code>访问。</p>
+<p>由于直接访问不是HTTPS链接，浏览器会提示不安全，可以用<a href="https://www.cloudflare.com/">CloudFlare</a> 提供的服务来强制使用HTTPS。</p>
+<ul>
+<li>注册CloudFlare账号，注册成功后在返回的页面中添加域名，点击扫描 DNS 记录，等待大约一分钟之后继续下一步。</li>
+<li>添加域名解析，即把域名指向<code>github.io</code>，和之前的CNAME记录一样。</li>
+<li>修改域名服务商中的DNS服务器为<a href="https://www.cloudflare.com/">CloudFlare</a> 的DNS服务器。</li>
+<li>在<a href="https://www.cloudflare.com/">CloudFlare</a>引导下完成剩余步骤，重点是强制使用HTTPS访问。</li>
+</ul>
+<p>这一部分<a href="https://www.cloudflare.com/">CloudFlare</a>中有详细引导。完成之后，直接访问<a href="https://blog.shijy16.cn/2021/05/11/%E9%85%8D%E7%BD%AE/Hexo%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/blog.shijy16.cn">blog.shijy16.cn</a>就是HTTPS连接了。</p>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><blockquote>
+<p><a href="https://www.dazhuanlan.com/2019/11/06/5dc26196564d8/">hexo目录设置</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/35668237">hexo+github博客搭建教程</a></p>
+<p><a href="https://blog.qsong.fun/2018/01/31/next%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE%E9%80%8F%E6%98%8E%E8%89%B2%E7%AD%89/">next主题配置透明色等</a></p>
+<p><a href="https://chrischen0405.github.io/2018/09/11/post20180911/">hexo页脚添加访客人数和总访问量</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/35668237">超详细Hexo+Github博客搭建小白教程</a></p>
+<p><a href="http://shenzekun.cn/hexo%E7%9A%84next%E4%B8%BB%E9%A2%98%E4%B8%AA%E6%80%A7%E5%8C%96%E9%85%8D%E7%BD%AE%E6%95%99%E7%A8%8B.html">hexo的next主题个性化配置教程</a></p>
+<p><a href="https://xring.info/2018/hexo-category-and-tag-page.html">Hexo 博客创建 categories 和 tags 页面</a></p>
+<p><a href="http://miracle778.site/pdf-test/pdf-test.html">hexo中插入pdf解决方法</a></p>
+<p><a href="https://maiyang.me/post/2018-04-09-using-https-with-custom-domain-name-on-github-pages/">为 Github Pages 自定义域名博客开启 HTTPS</a></p>
+<p><a href="https://yashuning.github.io/2018/06/29/hexo-Next-%E4%B8%BB%E9%A2%98%E6%B7%BB%E5%8A%A0%E8%AF%84%E8%AE%BA%E5%8A%9F%E8%83%BD/">hexo - Next 主题添加评论功能</a></p>
+<p><a href="https://blog.csdn.net/Olivia_Vang/article/details/92976637">更换Hexo的网页图标/小图片Hexo change page favicon</a></p>
+<p><a href="https://blog.winsky.wang/Hexo%E5%8D%9A%E5%AE%A2/Hexo%E5%8D%9A%E5%AE%A2Next%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE/">Hexo博客Next主题配置</a></p>
+<p><a href="https://www.cnblogs.com/Mayfly-nymph/p/10622307.html">Hexo解决页面过小问题与设置透明背景</a></p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>配置</category>
+      </categories>
+      <tags>
+        <tag>教程</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ctf学习笔记</title>
+    <url>/2021/05/13/CTF/ctf%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<p><object data="./note.pdf" type="application/pdf" width="100%" height="900px">This browser does not support PDFs. Please download the PDF to view it: <a href="/index.pdf">Download PDF</a><br></object></p>
+<p>文中latex源码、提到的题目、源码、writeup均位于<a href="https://github.com/shijy16/learn-ctf%E3%80%82">https://github.com/shijy16/learn-ctf。</a></p>
+<p>CTF学习系列文章:</p>
+<ul>
+<li><a href="https://blog.shijy16.cn/2021/05/11/CTF/ctf%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">ctf学习笔记</a>: 学习CTF的笔记，主要按照《从0到1:CTFer的成长之路》书中内容学习。</li>
+<li><a href="https://blog.shijy16.cn/2021/05/12/CTF/CTF%E8%A7%A3%E9%A2%98%E8%AE%B0%E5%BD%95/">CTF解题记录</a>: 《从0到1:CTFer的成长之路》配套平台的题目解题步骤。</li>
+<li><a href="https://blog.shijy16.cn/2021/05/12/CTF/CTF%E5%AD%A6%E4%B9%A0%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E9%A2%98%E7%9B%AEWP/">CTF学习过程中的题目WP</a>:学习CTF过程中遇到的题目的WP。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>CTFer配套题目解题记录</title>
+    <url>/2021/05/13/CTF/CTFer%E9%85%8D%E5%A5%97%E9%A2%98%E7%9B%AE%E8%A7%A3%E9%A2%98%E8%AE%B0%E5%BD%95/</url>
+    <content><![CDATA[<p><object data="./answers.pdf" type="application/pdf" width="100%" height="900px">This browser does not support PDFs. Please download the PDF to view it: <a href="/index.pdf">Download PDF</a><br></object></p>
+<p>文中latex源码、提到的题目、源码、writeup均位于<a href="https://github.com/shijy16/learn-ctf%E3%80%82">https://github.com/shijy16/learn-ctf。</a></p>
+<p>CTF学习系列文章:</p>
+<ul>
+<li><a href="https://blog.shijy16.cn/2021/05/11/CTF/ctf%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">ctf学习笔记</a>: 学习CTF的笔记，主要按照《从0到1:CTFer的成长之路》书中内容学习。</li>
+<li><a href="https://blog.shijy16.cn/2021/05/12/CTF/CTF%E8%A7%A3%E9%A2%98%E8%AE%B0%E5%BD%95/">CTF解题记录</a>: 《从0到1:CTFer的成长之路》配套平台的题目解题步骤。</li>
+<li><a href="https://blog.shijy16.cn/2021/05/12/CTF/CTF%E5%AD%A6%E4%B9%A0%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E9%A2%98%E7%9B%AEWP/">CTF学习过程中的题目WP</a>:学习CTF过程中遇到的题目的WP。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>CTF学习过程中的题目WP</title>
+    <url>/2021/05/13/CTF/CTF%E5%AD%A6%E4%B9%A0%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E9%A2%98%E7%9B%AEWP/</url>
+    <content><![CDATA[<p><object data="./writeup.pdf" type="application/pdf" width="100%" height="900px">This browser does not support PDFs. Please download the PDF to view it: <a href="/index.pdf">Download PDF</a><br></object></p>
+<p>文中latex源码、提到的题目、源码、writeup均位于<a href="https://github.com/shijy16/learn-ctf%E3%80%82">https://github.com/shijy16/learn-ctf。</a></p>
+<p>CTF学习系列文章:</p>
+<ul>
+<li><a href="https://blog.shijy16.cn/2021/05/11/CTF/ctf%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">ctf学习笔记</a>: 学习CTF的笔记，主要按照《从0到1:CTFer的成长之路》书中内容学习。</li>
+<li><a href="https://blog.shijy16.cn/2021/05/12/CTF/CTF%E8%A7%A3%E9%A2%98%E8%AE%B0%E5%BD%95/">CTF解题记录</a>: 《从0到1:CTFer的成长之路》配套平台的题目解题步骤。</li>
+<li><a href="https://blog.shijy16.cn/2021/05/12/CTF/CTF%E5%AD%A6%E4%B9%A0%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E9%A2%98%E7%9B%AEWP/">CTF学习过程中的题目WP</a>:学习CTF过程中遇到的题目的WP。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>nvidia驱动和CUDA环境安装</title>
+    <url>/2021/05/13/%E9%85%8D%E7%BD%AE/nvidia%E9%A9%B1%E5%8A%A8%E5%92%8CCUDA%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/</url>
+    <content><![CDATA[<h2 id="卸载所有nvidia相关文件"><a href="#卸载所有nvidia相关文件" class="headerlink" title="卸载所有nvidia相关文件"></a>卸载所有nvidia相关文件</h2><p>一开始在安装了驱动后，安装CUDA的时候一直提示检测到驱动已安装，是否还要继续。搞得我很懵逼。又强行把所有nvidia驱动卸载了，不过正常安装前都需要把之前的所有nvidia相关软件卸了。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo apt --purge remove *nvidia*</span><br><span class="line">sudo apt autoremove</span><br></pre></td></tr></table></figure>
+
+<h2 id="禁用Nouveau-kernel-driver"><a href="#禁用Nouveau-kernel-driver" class="headerlink" title="禁用Nouveau kernel driver"></a>禁用Nouveau kernel driver</h2><p><code>Nouveau kernel driver</code>是一个开放源码显卡驱动程序，linux发行版自带，一般作为桌面程序默认的显卡驱动，在安装N卡驱动前 或后需要将该驱动屏蔽，强制系统使用新安装的N卡程序。</p>
+<p>创建文件<code>/etc/modprobe.d/blacklist-nouveau.conf</code>，添加如下内容:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">blacklist nouveau</span><br><span class="line">blacklist lbm-nouveau</span><br><span class="line">options nouveau modeset=0</span><br><span class="line">alias nouveau off</span><br><span class="line">alias lbm-nouveau off</span><br></pre></td></tr></table></figure>
+
+<p>然后执行<code>sudo update-initramfs -u</code>。</p>
+<p>如果<code>xserver</code>在运行中，也需要先关闭<code>xserver</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">service lightdm stop</span><br></pre></td></tr></table></figure>
+
+<h2 id="直接安装驱动和CUDA"><a href="#直接安装驱动和CUDA" class="headerlink" title="直接安装驱动和CUDA"></a>直接安装驱动和CUDA</h2><blockquote>
+<p>我就是装了驱动后再装CUDA，然后装CUDA的时候一进去就提示检测到驱动，我以为是冲突了，就把所有驱动卸了，实际上应该不管这个提示，继续安装CUDA就好。</p>
+</blockquote>
+<p>驱动不需要手动安装，因为我在手动安装时提示可以自动安装，且自动安装的版本会更适合机器，所以直接自动安装驱动:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo ubuntu-drivers autoinstall</span><br></pre></td></tr></table></figure>
+
+<p>然后重启系统:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo reboot</span><br></pre></td></tr></table></figure>
+
+<p>确认安装正常:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">nvidia-smi</span><br></pre></td></tr></table></figure>
+
+<p>显示支持<code>11.2</code>版本的CUDA，到<a href="https://developer.nvidia.com/cuda-toolkit-archive">CUDA下载页</a>找对应版本的CUDA，然后下载CUDA的<code>.run</code>安装文件:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">wget https://developer.download.nvidia.com/compute/cuda/11.2.2/local_installers/cuda_11.2.2_460.32.03_linux.run</span><br><span class="line">sudo sh cuda_11.2.2_460.32.03_linux.run</span><br></pre></td></tr></table></figure>
+
+<p>安装时首先会提示检测到安装了驱动，选择继续安装，在第二页取消勾选driver。继续安装即可。</p>
+<p>安装完成后，在<code>~/.bashrc</code>中添加环境变量:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">export LD_LIBRARY_PATH=&quot;/usr/local/cuda/lib64&quot;:$LD_LIBRARY_PATH</span><br><span class="line">export PATH=&quot;/usr/local/cuda/bin&quot;:$PATH</span><br></pre></td></tr></table></figure>
+
+<p>使用<code>nvcc --version</code>查看是否安装成功。</p>
+<h2 id="安装Cudnn"><a href="#安装Cudnn" class="headerlink" title="安装Cudnn"></a>安装Cudnn</h2><p>进入<a href="https://developer.nvidia.com/cudnn">cudnn</a>下载页，注册开发者账号填问卷后，下载压缩包，然后解压缩，进行如下拷贝和权限设置即可:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo cp cuda/include/cudnn.h /usr/local/cuda/include</span><br><span class="line">sudo cp cuda/lib64/libcudnn* /usr/local/cuda/lib64</span><br><span class="line">sudo chmod a+r /usr/local/cuda/include/*.h </span><br><span class="line">sudo chmod a+r /usr/local/cuda/lib64/libcudnn*</span><br></pre></td></tr></table></figure>
+
+<h2 id="在cuda11-2下安装torch"><a href="#在cuda11-2下安装torch" class="headerlink" title="在cuda11.2下安装torch"></a>在cuda11.2下安装torch</h2><p>官方稳定版torch还没有支持11.2，需要手动编译源码安装。用Anaconda创建一个python3.9环境，然后安装依赖:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">conda install numpy ninja pyyaml mkl mkl-include setuptools cmake cffi typing_extensions future six requests dataclasses</span><br></pre></td></tr></table></figure>
+
+<p>获取pytorch并安装:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git clone --recursive https://github.com/pytorch/pytorch</span><br><span class="line">cd pytorch</span><br><span class="line"># if you are updating an existing checkout</span><br><span class="line">git submodule sync</span><br><span class="line">git submodule update --init --recursive</span><br><span class="line">export CMAKE_PREFIX_PATH=$&#123;CONDA_PREFIX:-&quot;$(dirname $(which conda))/../&quot;&#125;</span><br><span class="line">python setup.py install</span><br></pre></td></tr></table></figure>
+
+<p>之后python命令行中验证安装:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">import torch</span><br><span class="line">print(torch.__version__)</span><br><span class="line">print(torch.version.cuda)</span><br></pre></td></tr></table></figure>
+
+<p>安装完成。</p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a href="https://www.jianshu.com/p/ba6beab8ad7f">安装NVIDIA显卡驱动和CUDA Toolkit</a></p>
+<p><a href="https://medium.com/analytics-vidhya/install-cuda-11-2-cudnn-8-1-0-and-python-3-9-on-rtx3090-for-deep-learning-fcf96c95f7a1">Install CUDA 11.2, cuDNN 8.1.0, PyTorch v1.8.0 (or v1.9.0), and python 3.9 on RTX3090 for deep learning</a></p>
+]]></content>
+      <categories>
+        <category>配置</category>
+      </categories>
+      <tags>
+        <tag>GPU</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>用ssh反向代理完成内网穿透</title>
+    <url>/2021/05/13/%E9%85%8D%E7%BD%AE/%E7%94%A8ssh%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E5%AE%8C%E6%88%90%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/</url>
+    <content><![CDATA[<h2 id="内网穿透和反向代理"><a href="#内网穿透和反向代理" class="headerlink" title="内网穿透和反向代理"></a>内网穿透和反向代理</h2><p>想要从外网访问内网的服务器时，需要做内网穿透。反向代理是一种进行内网穿透的方法。</p>
+<p>反向代理要求有一台公网的服务器来做代理，通俗地讲就是跳板。记内网服务器为T，公网服务器为O。T向O发起ssh反向代理请求，而后T和O就会建立ssh链接，O可以通过自身的反向代理端口访问T的ssh端口，然后O再把来自用户的ssh请求转发到反向代理端口，就可以让用户ssh链接到T了。</p>
+<p>简单来说，由于内网是外网访问不到的，就在内网中主动向外网的服务器建立一个稳定的链接，然后外网的其他用户就可以通过这个外网的服务器访问内网了。</p>
+<h2 id="ssh反向代理和端口转发配置"><a href="#ssh反向代理和端口转发配置" class="headerlink" title="ssh反向代理和端口转发配置"></a>ssh反向代理和端口转发配置</h2><h3 id="反向代理"><a href="#反向代理" class="headerlink" title="反向代理"></a>反向代理</h3><p>直接进行配置，在内网服务器上，向公网服务器发起反向代理请求:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh -fCNR 7280:localhost:22 root@remot_ip</span><br></pre></td></tr></table></figure>
+
+<p>R选项：通过绑定远程主机上的地址和端口(port)，将该端口上收到的数据转发到host+hostport指定的端口上。</p>
+<p>这条命令让远程服务器把7280端口的ssh链接转发到本地22端口。</p>
+<p>ssh链接有时候会断，为了保证链接稳定，需要使用<code>autossh</code>:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo apt install autossh</span><br><span class="line">autossh -M 7281 ssh -fCNR 7280:localhost:22 root@remot_ip</span><br></pre></td></tr></table></figure>
+
+<p>后一句命令指定了在远程主机上使用7281端口来监控、维持后面的ssh链接。</p>
+<p>这时可以通过netstat命令来查看链接是否正常:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">netstat -tnlp</span><br></pre></td></tr></table></figure>
+
+<p>如果7280和7281端口在监听状态，就没有问题。</p>
+<p>也可以在公网服务器上尝试链接内网服务器来确认这一步正确:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh username@localhost -p 7280</span><br></pre></td></tr></table></figure>
+
+<h3 id="端口转发"><a href="#端口转发" class="headerlink" title="端口转发"></a>端口转发</h3><p>用户不能直接通过公网服务器的7280端口去链接内网的服务器，需要另外指定一个端口，公网服务器将该端口的ssh链接转发到7280端口即可让用户链接到内网服务器，所以在公网服务器可以执行如下命令来做端口转发:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh -fCNL *:1234:localhost:7280 localhost</span><br></pre></td></tr></table></figure>
+
+<p>表示将本地1234端口的ssh链接转发到7280端口。</p>
+<h3 id="进行远程连接"><a href="#进行远程连接" class="headerlink" title="进行远程连接"></a>进行远程连接</h3><p>最后，用户可以直接ssh公网服务器的1234端口，从而连接到内网服务器:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh username@remote_ip -p 1234</span><br></pre></td></tr></table></figure>
+
+<h2 id="开机自启"><a href="#开机自启" class="headerlink" title="开机自启"></a>开机自启</h2><p>反向代理命令开机自启，不然内网服务器一重启就连不上了。</p>
+<p>把<code>autossh</code>命令写进一个脚本<code>autossh.sh</code>，然后放入<code>/etc/profile.d</code>文件夹下，给予执行权限。注意需要用root用户创建这个脚本，否则启动时可能没有足够的执行权限:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd /etc/profile.d</span><br><span class="line">sudo su</span><br><span class="line">vim autossh.sh</span><br><span class="line"># 添加autossh命令</span><br><span class="line">sudo chmod +x autossh.sh</span><br></pre></td></tr></table></figure>
+
+<p>按理说这样配置之后开机自启应该没问题了，但是我重启之后这条命令虽然被执行了，但是没有效果，必须kill掉这条命令然后手动重新执行才可以，找不到原因</p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a href="https://www.jianshu.com/p/dafbbbe4c43b">使用SSH反向代理和端口转发</a></p>
+<p><a href="https://blog.csdn.net/weixin_40429823/article/details/99006940">Linux以root权限开机自动运行脚本</a></p>
+]]></content>
+      <categories>
+        <category>配置</category>
+      </categories>
+      <tags>
+        <tag>网络</tag>
+      </tags>
+  </entry>
+</search>
