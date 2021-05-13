@@ -1,6 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>CTFer配套题目解题记录</title>
+    <url>/2021/05/13/CTF/CTFer%E9%85%8D%E5%A5%97%E9%A2%98%E7%9B%AE%E8%A7%A3%E9%A2%98%E8%AE%B0%E5%BD%95/</url>
+    <content><![CDATA[<p><object data="./answers.pdf" type="application/pdf" width="100%" height="900px">This browser does not support PDFs. Please download the PDF to view it: <a href="/index.pdf">Download PDF</a><br></object></p>
+<p>文中latex源码、提到的题目、源码、writeup均位于<a href="https://github.com/shijy16/learn-ctf%E3%80%82">https://github.com/shijy16/learn-ctf。</a></p>
+<p>CTF学习系列文章:</p>
+<ul>
+<li><a href="https://blog.shijy16.cn/2021/05/11/CTF/ctf%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">ctf学习笔记</a>: 学习CTF的笔记，主要按照《从0到1:CTFer的成长之路》书中内容学习。</li>
+<li><a href="https://blog.shijy16.cn/2021/05/12/CTF/CTF%E8%A7%A3%E9%A2%98%E8%AE%B0%E5%BD%95/">CTF解题记录</a>: 《从0到1:CTFer的成长之路》配套平台的题目解题步骤。</li>
+<li><a href="https://blog.shijy16.cn/2021/05/12/CTF/CTF%E5%AD%A6%E4%B9%A0%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E9%A2%98%E7%9B%AEWP/">CTF学习过程中的题目WP</a>:学习CTF过程中遇到的题目的WP。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>CTF学习过程中的题目WP</title>
+    <url>/2021/05/13/CTF/CTF%E5%AD%A6%E4%B9%A0%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E9%A2%98%E7%9B%AEWP/</url>
+    <content><![CDATA[<p><object data="./writeup.pdf" type="application/pdf" width="100%" height="900px">This browser does not support PDFs. Please download the PDF to view it: <a href="/index.pdf">Download PDF</a><br></object></p>
+<p>文中latex源码、提到的题目、源码、writeup均位于<a href="https://github.com/shijy16/learn-ctf%E3%80%82">https://github.com/shijy16/learn-ctf。</a></p>
+<p>CTF学习系列文章:</p>
+<ul>
+<li><a href="https://blog.shijy16.cn/2021/05/11/CTF/ctf%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">ctf学习笔记</a>: 学习CTF的笔记，主要按照《从0到1:CTFer的成长之路》书中内容学习。</li>
+<li><a href="https://blog.shijy16.cn/2021/05/12/CTF/CTF%E8%A7%A3%E9%A2%98%E8%AE%B0%E5%BD%95/">CTF解题记录</a>: 《从0到1:CTFer的成长之路》配套平台的题目解题步骤。</li>
+<li><a href="https://blog.shijy16.cn/2021/05/12/CTF/CTF%E5%AD%A6%E4%B9%A0%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E9%A2%98%E7%9B%AEWP/">CTF学习过程中的题目WP</a>:学习CTF过程中遇到的题目的WP。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ctf学习笔记</title>
+    <url>/2021/05/13/CTF/ctf%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<p><object data="./note.pdf" type="application/pdf" width="100%" height="900px">This browser does not support PDFs. Please download the PDF to view it: <a href="/index.pdf">Download PDF</a><br></object></p>
+<p>文中latex源码、提到的题目、源码、writeup均位于<a href="https://github.com/shijy16/learn-ctf%E3%80%82">https://github.com/shijy16/learn-ctf。</a></p>
+<p>CTF学习系列文章:</p>
+<ul>
+<li><a href="https://blog.shijy16.cn/2021/05/11/CTF/ctf%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">ctf学习笔记</a>: 学习CTF的笔记，主要按照《从0到1:CTFer的成长之路》书中内容学习。</li>
+<li><a href="https://blog.shijy16.cn/2021/05/12/CTF/CTF%E8%A7%A3%E9%A2%98%E8%AE%B0%E5%BD%95/">CTF解题记录</a>: 《从0到1:CTFer的成长之路》配套平台的题目解题步骤。</li>
+<li><a href="https://blog.shijy16.cn/2021/05/12/CTF/CTF%E5%AD%A6%E4%B9%A0%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E9%A2%98%E7%9B%AEWP/">CTF学习过程中的题目WP</a>:学习CTF过程中遇到的题目的WP。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Hexo博客搭建</title>
     <url>/2021/05/13/%E9%85%8D%E7%BD%AE/Hexo%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/</url>
     <content><![CDATA[<h2 id="Hexo环境安装"><a href="#Hexo环境安装" class="headerlink" title="Hexo环境安装"></a>Hexo环境安装</h2><h3 id="安装node-js"><a href="#安装node-js" class="headerlink" title="安装node.js"></a>安装node.js</h3><p>下载安装<a href="https://nodejs.org/">node.js</a></p>
@@ -155,64 +212,7 @@
         <category>配置</category>
       </categories>
       <tags>
-        <tag>教程</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>ctf学习笔记</title>
-    <url>/2021/05/13/CTF/ctf%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<p><object data="./note.pdf" type="application/pdf" width="100%" height="900px">This browser does not support PDFs. Please download the PDF to view it: <a href="/index.pdf">Download PDF</a><br></object></p>
-<p>文中latex源码、提到的题目、源码、writeup均位于<a href="https://github.com/shijy16/learn-ctf%E3%80%82">https://github.com/shijy16/learn-ctf。</a></p>
-<p>CTF学习系列文章:</p>
-<ul>
-<li><a href="https://blog.shijy16.cn/2021/05/11/CTF/ctf%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">ctf学习笔记</a>: 学习CTF的笔记，主要按照《从0到1:CTFer的成长之路》书中内容学习。</li>
-<li><a href="https://blog.shijy16.cn/2021/05/12/CTF/CTF%E8%A7%A3%E9%A2%98%E8%AE%B0%E5%BD%95/">CTF解题记录</a>: 《从0到1:CTFer的成长之路》配套平台的题目解题步骤。</li>
-<li><a href="https://blog.shijy16.cn/2021/05/12/CTF/CTF%E5%AD%A6%E4%B9%A0%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E9%A2%98%E7%9B%AEWP/">CTF学习过程中的题目WP</a>:学习CTF过程中遇到的题目的WP。</li>
-</ul>
-]]></content>
-      <categories>
-        <category>学习笔记</category>
-      </categories>
-      <tags>
-        <tag>CTF</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>CTFer配套题目解题记录</title>
-    <url>/2021/05/13/CTF/CTFer%E9%85%8D%E5%A5%97%E9%A2%98%E7%9B%AE%E8%A7%A3%E9%A2%98%E8%AE%B0%E5%BD%95/</url>
-    <content><![CDATA[<p><object data="./answers.pdf" type="application/pdf" width="100%" height="900px">This browser does not support PDFs. Please download the PDF to view it: <a href="/index.pdf">Download PDF</a><br></object></p>
-<p>文中latex源码、提到的题目、源码、writeup均位于<a href="https://github.com/shijy16/learn-ctf%E3%80%82">https://github.com/shijy16/learn-ctf。</a></p>
-<p>CTF学习系列文章:</p>
-<ul>
-<li><a href="https://blog.shijy16.cn/2021/05/11/CTF/ctf%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">ctf学习笔记</a>: 学习CTF的笔记，主要按照《从0到1:CTFer的成长之路》书中内容学习。</li>
-<li><a href="https://blog.shijy16.cn/2021/05/12/CTF/CTF%E8%A7%A3%E9%A2%98%E8%AE%B0%E5%BD%95/">CTF解题记录</a>: 《从0到1:CTFer的成长之路》配套平台的题目解题步骤。</li>
-<li><a href="https://blog.shijy16.cn/2021/05/12/CTF/CTF%E5%AD%A6%E4%B9%A0%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E9%A2%98%E7%9B%AEWP/">CTF学习过程中的题目WP</a>:学习CTF过程中遇到的题目的WP。</li>
-</ul>
-]]></content>
-      <categories>
-        <category>学习笔记</category>
-      </categories>
-      <tags>
-        <tag>CTF</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>CTF学习过程中的题目WP</title>
-    <url>/2021/05/13/CTF/CTF%E5%AD%A6%E4%B9%A0%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E9%A2%98%E7%9B%AEWP/</url>
-    <content><![CDATA[<p><object data="./writeup.pdf" type="application/pdf" width="100%" height="900px">This browser does not support PDFs. Please download the PDF to view it: <a href="/index.pdf">Download PDF</a><br></object></p>
-<p>文中latex源码、提到的题目、源码、writeup均位于<a href="https://github.com/shijy16/learn-ctf%E3%80%82">https://github.com/shijy16/learn-ctf。</a></p>
-<p>CTF学习系列文章:</p>
-<ul>
-<li><a href="https://blog.shijy16.cn/2021/05/11/CTF/ctf%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">ctf学习笔记</a>: 学习CTF的笔记，主要按照《从0到1:CTFer的成长之路》书中内容学习。</li>
-<li><a href="https://blog.shijy16.cn/2021/05/12/CTF/CTF%E8%A7%A3%E9%A2%98%E8%AE%B0%E5%BD%95/">CTF解题记录</a>: 《从0到1:CTFer的成长之路》配套平台的题目解题步骤。</li>
-<li><a href="https://blog.shijy16.cn/2021/05/12/CTF/CTF%E5%AD%A6%E4%B9%A0%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E9%A2%98%E7%9B%AEWP/">CTF学习过程中的题目WP</a>:学习CTF过程中遇到的题目的WP。</li>
-</ul>
-]]></content>
-      <categories>
-        <category>学习笔记</category>
-      </categories>
-      <tags>
-        <tag>CTF</tag>
+        <tag>博客</tag>
       </tags>
   </entry>
   <entry>
