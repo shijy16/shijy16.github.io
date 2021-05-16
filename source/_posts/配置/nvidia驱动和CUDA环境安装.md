@@ -88,6 +88,32 @@ sudo chmod a+r /usr/local/cuda/include/*.h
 sudo chmod a+r /usr/local/cuda/lib64/libcudnn*
 ```
 
+### 安装后解决问题: `/usr/local/cuda/lib64/libcudnn*.so* is not a static symbol`
+
+安装后使用`ldconfig`的时候可能会有错误提示:
+
+````
+/sbin/ldconfig.real: /usr/local/cuda-11.2/targets/x86_64-linux/lib/libcudnn_cnn_infer.so.8 is not a symbolic link
+/sbin/ldconfig.real: /usr/local/cuda-11.2/targets/x86_64-linux/lib/libcudnn.so.8 is not a symbolic link
+/sbin/ldconfig.real: /usr/local/cuda-11.2/targets/x86_64-linux/lib/libcudnn_adv_infer.so.8 is not a symbolic link
+/sbin/ldconfig.real: /usr/local/cuda-11.2/targets/x86_64-linux/lib/libcudnn_ops_infer.so.8 is not a symbolic link
+/sbin/ldconfig.real: /usr/local/cuda-11.2/targets/x86_64-linux/lib/libcudnn_cnn_train.so.8 is not a symbolic link
+/sbin/ldconfig.real: /usr/local/cuda-11.2/targets/x86_64-linux/lib/libcudnn_adv_train.so.8 is not a symbolic link
+/sbin/ldconfig.real: /usr/local/cuda-11.2/targets/x86_64-linux/lib/libcudnn_ops_train.so.8 is not a symbolic link
+````
+
+可能是拷贝后静态链接被损坏导致的，需要一个一个解决，以`libcudnn.so`为例:
+
+````sh
+sudo rm libcudnn.so.8 libcudnn.so
+sudo ln libcudnn.so.8.2.0 libcudnn.so.8
+sudo ln libcudnn.so.8 libcudnn.so
+````
+
+一个一个解决就好了。
+
+
+
 ## 在cuda11.2下安装torch
 
 官方稳定版torch还没有支持11.2，需要手动编译源码安装。用Anaconda创建一个python3.9环境，然后安装依赖:
@@ -110,13 +136,35 @@ python setup.py install
 
 之后python命令行中验证安装:
 
-```
+```python
 import torch
 print(torch.__version__)
 print(torch.version.cuda)
 ```
 
-安装完成。
+实际上我在`import torch`时报错:
+
+````
+>>> import  torch
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/home/varas/shijy/install_torch/pytorch/torch/__init__.py", line 214, in <module>
+    raise ImportError(textwrap.dedent('''
+ImportError: Failed to load PyTorch C extensions:
+    It appears that PyTorch has loaded the `torch/_C` folder
+    of the PyTorch repository rather than the C extensions which
+    are expected in the `torch._C` namespace. This can occur when
+    using the `install` workflow. e.g.
+        $ python setup.py install && python -c "import torch"
+
+    This error can generally be solved using the `develop` workflow
+        $ python setup.py develop && python -c "import torch"  # This should succeed
+    or by running Python from a different directory.
+````
+
+按照提示执行`python setup.py develop`就好了。
+
+
 
 ## 参考链接
 
