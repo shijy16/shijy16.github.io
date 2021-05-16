@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/icon32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/icon16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shijy16.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="这篇文章描述的是大名鼎鼎的幽灵攻击，一种利用分支预测机制的侧信道攻击方法，可以从受害进程中读取任意内存。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spectre Attack论文阅读">
+<meta property="og:url" content="https://shijy16.github.io/2021/05/17/%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%E6%94%BB%E5%87%BB/SepctreAttack%E9%98%85%E8%AF%BB%E6%8A%A5%E5%91%8A/index.html">
+<meta property="og:site_name" content="shijy&#39;s blog">
+<meta property="og:description" content="这篇文章描述的是大名鼎鼎的幽灵攻击，一种利用分支预测机制的侧信道攻击方法，可以从受害进程中读取任意内存。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://shijy16.github.io/2021/05/17/%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%E6%94%BB%E5%87%BB/SepctreAttack%E9%98%85%E8%AF%BB%E6%8A%A5%E5%91%8A/1.jpg">
+<meta property="og:image" content="https://shijy16.github.io/2021/05/17/%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%E6%94%BB%E5%87%BB/SepctreAttack%E9%98%85%E8%AF%BB%E6%8A%A5%E5%91%8A/2.jpg">
+<meta property="og:image" content="https://shijy16.github.io/2021/05/17/%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%E6%94%BB%E5%87%BB/SepctreAttack%E9%98%85%E8%AF%BB%E6%8A%A5%E5%91%8A/3.jpg">
+<meta property="og:image" content="https://shijy16.github.io/2021/05/17/%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%E6%94%BB%E5%87%BB/SepctreAttack%E9%98%85%E8%AF%BB%E6%8A%A5%E5%91%8A/4.jpg">
+<meta property="og:image" content="https://shijy16.github.io/2021/05/17/%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%E6%94%BB%E5%87%BB/SepctreAttack%E9%98%85%E8%AF%BB%E6%8A%A5%E5%91%8A/5.jpg">
+<meta property="article:published_time" content="2021-05-16T17:14:00.000Z">
+<meta property="article:modified_time" content="2021-05-16T17:18:20.599Z">
+<meta property="article:author" content="shijy16">
+<meta property="article:tag" content="CPU体系结构攻击">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://shijy16.github.io/2021/05/17/%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%E6%94%BB%E5%87%BB/SepctreAttack%E9%98%85%E8%AF%BB%E6%8A%A5%E5%91%8A/1.jpg">
+
+<link rel="canonical" href="https://shijy16.github.io/2021/05/17/%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%E6%94%BB%E5%87%BB/SepctreAttack%E9%98%85%E8%AF%BB%E6%8A%A5%E5%91%8A/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Spectre Attack论文阅读 | shijy's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">shijy's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://shijy16.github.io/2021/05/17/%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%E6%94%BB%E5%87%BB/SepctreAttack%E9%98%85%E8%AF%BB%E6%8A%A5%E5%91%8A/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="shijy16">
+      <meta itemprop="description" content="A CS graduate and noob security postgraduate.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="shijy's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Spectre Attack论文阅读
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-05-17 01:14:00 / 修改时间：01:18:20" itemprop="dateCreated datePublished" datetime="2021-05-17T01:14:00+08:00">2021-05-17</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">论文阅读笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+            <div class="post-description">这篇文章描述的是大名鼎鼎的幽灵攻击，一种利用分支预测机制的侧信道攻击方法，可以从受害进程中读取任意内存。</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h1><p>这篇文章描述的是大名鼎鼎的幽灵攻击，一种利用分支预测机制的侧信道攻击方法，可以从受害进程中读取任意内存。</p>
+<p>分支预测(投机执行)在预测错误情况下执行了不该执行的逻辑，访问了不该访问的内存和寄存器。尽管CPU进行了状态回退，仍存在副作用，可能从侧信道泄露机密信息。</p>
+<p>实际上，分支预测的实现与很多现有安全机制依赖的安全假设相悖，如操作系统线程分离、容器化、即时编译和缓存定时、侧信道攻击的防御机制。对现有的数十亿Intel、AMD、ARM设备带来了严重威胁。</p>
+<p>这篇文章主要介绍的是幽灵攻击最主要的两个变体:</p>
+<ul>
+<li>变体1 CVE-2017-5753: Bound Check Bypass</li>
+<li>变体2 CVE-2017-5715: Branch Target Injection</li>
+</ul>
+<h1 id="研究背景"><a href="#研究背景" class="headerlink" title="研究背景"></a>研究背景</h1><p>幽灵攻击主要利用分支预测技术和缓存侧信道攻击方法在受害进程中读取任意内存。本节对这篇文章主要利用的分支预测技术和主要利用的缓存侧信道攻击技术进行介绍。</p>
+<h2 id="分支预测"><a href="#分支预测" class="headerlink" title="分支预测"></a>分支预测</h2><p>遇到条件分支语句时，CPU会对分支方向进行猜测，不会暂停等待分支结果被计算出来。当猜测正确时，CPU会提交预测执行的结果，并继续执行下去，可以节省大量的时间，当猜测错误时，CPU会回退到预测执行之前的状态，从正确的分支方向开始执行。一般而言，CPU可以提前预测运行数百条指令，该限制由CPU中reorder<br>buffer决定。在微体系结构中，指令被划分为micro-ops，在Haswell微体系结构中，reorder<br>buffer可以容纳192个micro-ops。</p>
+<p>Intel会对如下指令进行预测:</p>
+<ul>
+<li><p>  直接调用和跳转。</p>
+</li>
+<li><p>  间接调用和跳转。</p>
+</li>
+<li><p>  条件分支。</p>
+</li>
+</ul>
+<p>分支预测方法一共分为三种:</p>
+<ul>
+<li><p>  静态预测:总是预测分支会/不会发生跳转。</p>
+</li>
+<li><p>  单调预测:总是预测分支向地址更高/低的方向继续执行。</p>
+</li>
+<li><p>  动态预测:根据近期程序行为进行预测。</p>
+</li>
+</ul>
+<p>主要分支预测组件为:</p>
+<ul>
+<li>Branch Target Buffer(BTB):存放每个分支指令的跳转目标地址低位，一般用分支指令地址的低位进行索引。</li>
+<li>  Branch History Buffer(BHB):存放近期分支历史。</li>
+</ul>
+<p>在动态分支预测时，分支预测器会利用BTB和BHB、结合分支预测算法，对分支方向进行预测，并从BTB中获取分支地址。BTB和BHB是一个核内所有线程共享的。</p>
+<h2 id="缓存侧信道攻击"><a href="#缓存侧信道攻击" class="headerlink" title="缓存侧信道攻击"></a>缓存侧信道攻击</h2><p>本文利用的缓存侧信道攻击方法主要为flush+reload方法和evict+reload方法，这两个方法首先清空攻击者和受害者共享的一大块缓存区域，等待受害者执行一段时间后，通过衡量读取该区域内每个缓存行需要的时间来确定攻击者在这段时间内访问了哪些缓存行，若被访问缓存行对应的地址中含有机密信息，攻击者就可以通过这个方法恢复出机密信息。</p>
+<p>flush+reload方法和evict+reload方法的区别在于前者通过clflush指令清空缓存区域，后者通过竞争的方式清空缓存区域。</p>
+<h2 id="本文方法"><a href="#本文方法" class="headerlink" title="本文方法"></a>本文方法</h2><p>本文章将误导分支预测器进行错误预测，导致恶意代码被预测执行(在变体2中通过注入BTB来控制控制流到恶意代码)，哪怕CPU发现预测错误然后恢复状态以后，数据也从缓存侧信道泄露，然后本文利用缓存侧信道攻击方法从缓存中恢复泄露的数据，从而达到读取任意数据的目的。</p>
+<h1 id="相关工作"><a href="#相关工作" class="headerlink" title="相关工作"></a>相关工作</h1><p>meltdown攻击和spectre attack一样，也是一种微体系结构层面的侧信道攻击，都利用了CPU投机执行的机制，它们的不同之处在于:</p>
+<ul>
+<li><p>  meltdown利用乱序执行时，CPU忽略了权限检查，可以读取内核地址。打破的是内核和用户之间的隔离。</p>
+</li>
+<li><p>spectre利用了分支预测，可以读取其他进程的地址空间。打破的是进程间的隔离。</p>
+</li>
+<li><p>meltdown 主要作用于intel<br>  CPU。现代CPU普遍采用分支预测技术，所以spectre作用范围更广。</p>
+</li>
+</ul>
+<h1 id="研究内容"><a href="#研究内容" class="headerlink" title="研究内容"></a>研究内容</h1><p>这篇文章主要研究内容是幽灵攻击，介绍了最主要的两个变体:</p>
+<ul>
+<li><p>  变体1 CVE-2017-5753: Bound Check Bypass</p>
+</li>
+<li><p>  变体2 CVE-2017-5715: Branch Target Injection</p>
+</li>
+</ul>
+<p>变体1通过误导分支预测器，绕过边界检查，导致CPU执行不该执行的分支，读取不该读取的数据，CPU状态恢复之后，攻击者从缓存中恢复该读取的数据，从达到读取任意地址的目的。变体2通过注入BTB和误导分支预测器，劫持控制流到gadget，导致gadget被瞬态执行，读取攻击者想要读取的数据，然后从缓存中恢复该数据，从而读取任意地址。</p>
+<h1 id="方法实现"><a href="#方法实现" class="headerlink" title="方法实现"></a>方法实现</h1><h2 id="攻击总览"><a href="#攻击总览" class="headerlink" title="攻击总览"></a>攻击总览</h2><p>整个攻击主要思路为:</p>
+<ul>
+<li><p>  诱使受害者进行推测执行。</p>
+</li>
+<li><p>  利用缓存信道泄露受害者机密信息。</p>
+</li>
+</ul>
+<p>整个攻击可分为三个阶段。</p>
+<h4 id="阶段一"><a href="#阶段一" class="headerlink" title="阶段一"></a>阶段一</h4><p>setup阶段，主要工作为:</p>
+<ul>
+<li><p>  训练处理器，使其进行可利用的错误的分支预测。</p>
+</li>
+<li><p>  进行一些操作，使得推测执行更容易发生，如控制cache，清除处理器确定实际控制流所需要的数据。</p>
+</li>
+<li><p>  准备秘密信道: 进行Flush+Reload或Evict+Rload的清空缓存部分。</p>
+</li>
+</ul>
+<h4 id="阶段二"><a href="#阶段二" class="headerlink" title="阶段二"></a>阶段二</h4><p>让处理器推测执行指令，使受害者的机密信息从其上下文中被存放到机密信道。可能进行的工作为:</p>
+<ul>
+<li><p>  攻击者请求受害者执行某种操作，从而触发推测执行，如系统调用、socket、文件等。</p>
+</li>
+<li><p>  或在自己的代码中推测执行，以获取同一进程中的敏感信息。如在解释器、JIT编译器、安全语言的沙箱中获取敏感信息。</p>
+</li>
+</ul>
+<p>推测执行把敏感数据暴露在了机密信道，如cache中。所以推测执行中可以读取一个攻击者给定的地址的值，然后把这个值作为地址的一部分，对该地址进行内存操作，改变其对应cache状态，从而暴露这个值。</p>
+<h4 id="阶段三"><a href="#阶段三" class="headerlink" title="阶段三"></a>阶段三</h4><p>通过Flush+Reload或Evict+Rload恢复秘密值。</p>
+<h2 id="变体1"><a href="#变体1" class="headerlink" title="变体1"></a>变体1</h2><p>变体1假定攻击者想要读取同一线程中原本无法读取的区域。变体1POC如图所示，变体1通过训练分支预测器，即多次使用合法的offset运行该代码片段，导致if分支被误导，使得在后续攻击者使用不合法的offset调用该代码片段时，后续代码被预测执行，将<em>s<strong>i</strong>g<strong>n</strong>a**l</em> + <em>i<strong>n</strong>d<strong>e</strong>x</em>2地址的值读取到cache中，哪怕该代码片段最后会被回退，signal+ index2地址对应的缓存行仍然会保存在cache中，攻击者可以通过flush+reload方法获取index2的值，从而得到value的值(一个攻击者无法访问的机密值)。</p>
+<img src="1.jpg" alt="变体1示例" style="width:80.0%" />
+
+<p>变体1的应用场景为javascript等沙箱和即时编译器、解释器场景中，变体1可以应用在eBPF接口中读取内核地址。</p>
+<h2 id="变体2"><a href="#变体2" class="headerlink" title="变体2"></a>变体2</h2><p>在变体2中，假定攻击者和受害者是统一进程的两个线程，攻击者想要读取受害者的内存，如图 。攻击者可以找到受害者地址空间中的一个gadget(通常在共享库中)和选取受害者的一个间接分支指令为注入目标。在自身地址空间的相同位置的间接分支指令处不断跳转到gadget在受害者地址空间中的地址，从而导致受害者的目标间接分支指令对应BTB表项被注入为gadget地址，受害者执行该间接分支指令时，会发生预测执行gadget，攻击者可以利用该gadget完成一些读取操作，配合后续的flush+reload。</p>
+<img src="2.jpg" alt="变体2:间接分支毒化" style="width:80.0%" />
+
+<h4 id="gadget"><a href="#gadget" class="headerlink" title="gadget"></a>gadget</h4><p>gadget需要选取攻击者能够控制其中两个寄存器的(部分情况下一个寄存器也够用)代码片段，如下:</p>
+<pre><code>add/xor/... R2,[R1]
+access R2
+</code></pre>
+<p>然后就可以通过flush+reload方法恢复出[R1]的值。<br>变体2相比变体1更灵活。作者还提出了通过变体2在虚拟机中读取host主机地址空间的方法。</p>
+<h3 id="攻击KVM"><a href="#攻击KVM" class="headerlink" title="攻击KVM"></a>攻击KVM</h3><p>逆向分析Intel<br>Haswell分支预测器内部，以准备对KVM进行攻击。作者使用同一核上的两个超线程进行实验，完成逆向:</p>
+<ul>
+<li><p>  Hyperthread A: jump指令跳转到Address 1。</p>
+</li>
+<li><p>  Hyperthread B: jump指令跳转到Address 2。</p>
+</li>
+<li><p>  A中Address 2处放着load一个缓存行的代码。</p>
+</li>
+<li><p>  用flush&amp;reload方法统计那个缓存行被加载的频率，计算错误预测率，从而探索分支预测算法。</p>
+</li>
+</ul>
+<p>逆向结果:</p>
+<p>2 <img src="3.jpg" alt="image" /><br><img src="4.jpg" alt="image" /></p>
+<p>攻击KVM的方法:假设攻击者有guest VM的完全控制权限，包括ring0，想要读取host内存地址。</p>
+<ul>
+<li><p>通过分析BTB和BHB泄露的信息来获取：</p>
+<ul>
+<li><p>hypervisor ASLR后的地址：Jump over ASLR: Attacking branch<br>  predictors to bypass ASLR</p>
+</li>
+<li><p>找到L3 cache集关联信息：Last-Level Cache Side-Channel Attacks<br>  are Practical</p>
+</li>
+<li><p>  物理内存位置映射信息: 通过分支注入spctre gadget来获取。</p>
+</li>
+</ul>
+</li>
+<li><p>  通过在hypervisor内存执行eBPF解释器来作为gadget，使用针对间接分支主要预测机制为目标的间接分支注入的方法，来泄露hypervisor的内存。</p>
+</li>
+</ul>
+<p>这一部分我没有看懂，在网上找到了稍微易懂一点的下图:</p>
+<img src="5.jpg" alt="VM攻击host" style="width:80.0%" />
+
+<p>图片来源于<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=zYRI60uAwYc">youtube</a></p>
+<h1 id="防御措施"><a href="#防御措施" class="headerlink" title="防御措施"></a>防御措施</h1><p>防御措施可以分为五个方向去做:</p>
+<ul>
+<li><p>防止推测执行。</p>
+<ul>
+<li><p>  未来可以允许软件禁用推测执行，或者硬件可以切换到禁止推测执行模式。但不能在当前立即解决问题。</p>
+</li>
+<li><p>  修改软件来串行执行或使用禁止推测指令来保证后续指令不会被推测执行。在分支指令的两个分支方向都放置ifence指令。</p>
+</li>
+<li><p>  在间接分支之前插入Ifence，可以确保清空分支之前的流水线，保证该分支被快速解决，从而减少推测执行的指令数量。</p>
+</li>
+</ul>
+</li>
+<li><p>防止敏感数据泄露:<br>  进程间隔离、数组边界检查、指针毒化。对JIT编译器、解释器最有用。</p>
+</li>
+<li><p>防止数据进入机密信道:<br>  未来处理器可以检测推测执行是否获取了数据，并阻止该数据被用于之后的操作。</p>
+</li>
+<li><p>防止从机密信道提取数据:<br>  如javascript降低了计时器的精度，还有概率添加抖动。只能降低攻击性能，不能杜绝攻击。当前处理器没办法完全消除隐蔽信道。</p>
+</li>
+<li><p>防止间接分支毒化-Intel和AMD指令集架构的控制间接分支的机制:</p>
+<ul>
+<li><p>Indirect Branch Restricted Speculation (IBRS):<br>  间接分支限制推测，防止特权级高的间接分支被特权级低的间接分支影响。IBRS模式中的处理器不受IBRS模式外的计算影响。</p>
+</li>
+<li><p>Single Thread Indirect Branch Prediction (STIBP):<br>  限制在同一内核的超线程上执行的软件之间的分支预测共享。</p>
+</li>
+<li><p>Indirect Branch Predictor Barrier (IBPB):<br>  防止在设置屏障之前运行的软件影响在屏障之后运行的软件的分支预测（通过刷新BTB状态）。</p>
+</li>
+</ul>
+</li>
+<li><p>防止间接分支毒化-google的retpolines:用ret指令替换所有的间接分支，相当于禁用分支预测。</p>
+<ul>
+<li>  Intel为一些处理器发布了micro-code更新，禁用return指令fall-back到BTB进行预测的机制。</li>
+</ul>
+</li>
+</ul>
+<p>要解决这个问题需要从根本上改变指令集体系结构，需要在安全性和性能之间做权衡取舍。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/CPU%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%E6%94%BB%E5%87%BB/" rel="tag"># CPU体系结构攻击</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/05/13/%E9%85%8D%E7%BD%AE/nvidia%E9%A9%B1%E5%8A%A8%E5%92%8CCUDA%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/" rel="prev" title="nvidia驱动和CUDA环境安装">
+      <i class="fa fa-chevron-left"></i> nvidia驱动和CUDA环境安装
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%91%98%E8%A6%81"><span class="nav-number">1.</span> <span class="nav-text">摘要</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A0%94%E7%A9%B6%E8%83%8C%E6%99%AF"><span class="nav-number">2.</span> <span class="nav-text">研究背景</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E6%94%AF%E9%A2%84%E6%B5%8B"><span class="nav-number">2.1.</span> <span class="nav-text">分支预测</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E4%BE%A7%E4%BF%A1%E9%81%93%E6%94%BB%E5%87%BB"><span class="nav-number">2.2.</span> <span class="nav-text">缓存侧信道攻击</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%AC%E6%96%87%E6%96%B9%E6%B3%95"><span class="nav-number">2.3.</span> <span class="nav-text">本文方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E5%B7%A5%E4%BD%9C"><span class="nav-number">3.</span> <span class="nav-text">相关工作</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A0%94%E7%A9%B6%E5%86%85%E5%AE%B9"><span class="nav-number">4.</span> <span class="nav-text">研究内容</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E5%AE%9E%E7%8E%B0"><span class="nav-number">5.</span> <span class="nav-text">方法实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%94%BB%E5%87%BB%E6%80%BB%E8%A7%88"><span class="nav-number">5.1.</span> <span class="nav-text">攻击总览</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%98%E4%BD%931"><span class="nav-number">5.2.</span> <span class="nav-text">变体1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%98%E4%BD%932"><span class="nav-number">5.3.</span> <span class="nav-text">变体2</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%BB%E5%87%BBKVM"><span class="nav-number">5.3.1.</span> <span class="nav-text">攻击KVM</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%98%B2%E5%BE%A1%E6%8E%AA%E6%96%BD"><span class="nav-number">6.</span> <span class="nav-text">防御措施</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="shijy16"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">shijy16</p>
+  <div class="site-description" itemprop="description">A CS graduate and noob security postgraduate.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/shijy16" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;shijy16" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:shijy16@163.com" title="E-Mail → mailto:shijy16@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">shijy16</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'd5fd42c3a6b193a721b1',
+      clientSecret: 'd627daf902f9b16290c40d5295a507eae2226c44',
+      repo        : 'shijy16.github.io',
+      owner       : 'shijy16',
+      admin       : ['shijy16'],
+      id          : '85f052920444cf2a18b1ddec1c4b9c0c',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>
