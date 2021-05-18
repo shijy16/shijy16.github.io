@@ -413,7 +413,7 @@ access R2
 <blockquote>
 <p>PS: 尝试用远程PDF链接失败，用其他仓库中的PDF链接时，会直接弹出下载窗口，无法直接预览。</p>
 <p>要直接预览的话需要为仓库创建github pages，但这样之后又不能方便更新了，和把pdf放到github.io仓库一样。</p>
-<p>有解决方案的同学可以通过email联系我或者在github中提issue。</p>
+<p>有解决方案的同学可以通过email联系我在后面评论。</p>
 </blockquote>
 <h3 id="个人域名重定向和HTTPS"><a href="#个人域名重定向和HTTPS" class="headerlink" title="个人域名重定向和HTTPS"></a>个人域名重定向和HTTPS</h3><p>首先在腾讯、阿里等域名代理商购买一个个人域名，我购买的是<code>shijy16.cn</code>，接下来对域名进行设置，使<code>blog.shijy16.cn</code>被解析到<code>shijy16.github.io</code>:</p>
 <ul>
@@ -481,11 +481,17 @@ access R2
 <h3 id="进行远程连接"><a href="#进行远程连接" class="headerlink" title="进行远程连接"></a>进行远程连接</h3><p>最后，用户可以直接ssh公网服务器的1234端口，从而连接到内网服务器:</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh username@remote_ip -p 1234</span><br></pre></td></tr></table></figure>
 
-<h2 id="开机自启"><a href="#开机自启" class="headerlink" title="开机自启"></a>开机自启</h2><p>反向代理命令开机自启，不然内网服务器一重启就连不上了。</p>
+<h2 id="开机自启"><a href="#开机自启" class="headerlink" title="开机自启"></a>开机自启</h2><p>2021.5.17 更新 注意注意:可能因为开机时没有网络，所以<code>autossh</code>脚本会运行失败，<strong>会导致启动失败</strong>，整个系统就启动不了。我在自己的机子上发现启动失败才发现。这也有可能是最近服务器重启的时候老是失败的原因…需要用启动盘去挂载<code>/</code>然后把启动脚本删了。所以还是<strong>别搞启动脚本</strong>了。</p>
+<p>挂载<code>/</code>:</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo mount /dev/xxx ~/r</span><br></pre></td></tr></table></figure>
+
+<p>要搞启动脚本的话估计用frp做内网穿透是一个更好的办法，现在懒得改了(正常情况下服务器不会重启，暂时没这个需求了)。</p>
+<p>以下是开机自启脚本配置方法原文，服务器上慎重使用：</p>
+<p>反向代理命令开机自启，不然内网服务器一重启就连不上了。</p>
 <p>把<code>autossh</code>命令写进一个脚本<code>autossh.sh</code>，然后放入<code>/etc/profile.d</code>文件夹下，给予执行权限。注意需要用root用户创建这个脚本，否则启动时可能没有足够的执行权限:</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd /etc/profile.d</span><br><span class="line">sudo su</span><br><span class="line">vim autossh.sh</span><br><span class="line"># 添加autossh命令</span><br><span class="line">sudo chmod +x autossh.sh</span><br></pre></td></tr></table></figure>
 
-<p>按理说这样配置之后开机自启应该没问题了，但是我重启之后这条命令虽然被执行了，但是没有效果，必须kill掉这条命令然后手动重新执行才可以，找不到原因</p>
+<p>按理说这样配置之后开机自启应该没问题了，但是我重启之后这条命令虽然被执行了，但是没有效果，必须kill掉这条命令然后手动重新执行才可以，找不到原因。</p>
 <h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a href="https://www.jianshu.com/p/dafbbbe4c43b">使用SSH反向代理和端口转发</a></p>
 <p><a href="https://blog.csdn.net/weixin_40429823/article/details/99006940">Linux以root权限开机自动运行脚本</a></p>
 ]]></content>
