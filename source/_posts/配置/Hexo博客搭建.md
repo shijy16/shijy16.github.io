@@ -410,7 +410,7 @@ url: https://shijy16.github.io
 >
 > 要直接预览的话需要为仓库创建github pages，但这样之后又不能方便更新了，和把pdf放到github.io仓库一样。
 >
-> 有解决方案的同学可以通过email联系我或者在github中提issue。
+> 有解决方案的同学可以通过email联系我在后面评论。
 
 ### 个人域名重定向和HTTPS
 
