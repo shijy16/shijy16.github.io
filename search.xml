@@ -824,8 +824,72 @@ access R2
       </categories>
       <tags>
         <tag>GPU</tag>
-        <tag>Android</tag>
-        <tag>攻击</tag>
+        <tag>高通</tag>
+        <tag>CVE</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Adreno GPU CVE-2020-11239笔记</title>
+    <url>/2021/09/07/GPU/Adreno-GPU-CVE-2020-11239%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<p>原文地址: <a href="https://securitylab.github.com/research/one_day_short_of_a_fullchain_android/">github security lab</a></p>
+<p>高通GPU驱动在上一篇介绍CVE-2020-11179的博客中已经进行了介绍，这里不做介绍。</p>
+<h1 id="漏洞成因"><a href="#漏洞成因" class="headerlink" title="漏洞成因"></a>漏洞成因</h1><h2 id="漏洞位置"><a href="#漏洞位置" class="headerlink" title="漏洞位置"></a>漏洞位置</h2><p>漏洞存在于<code>IOCTL_KGSL_GPUOBJ_IMPORT</code>和<code>IOCTL_KGSL_MAP_USER_MEM</code>这两个ioctl调用中，他们是用来创建app和kgsl驱动之间的共享内存的。调用这两个ioctl接口时，用户需要指定:</p>
+<ul>
+<li>一个用户空间的地址</li>
+<li>共享内存的大小</li>
+<li>内存类型</li>
+</ul>
+<p>这两个ioctl调用会将用户空间的内存映射到GPU的内存中。不同的内存类型会使得kernel会使用不同的机制来map和access用户内存。这里的内存类型分为两种:</p>
+<ul>
+<li>直接I/O: 直接将用户空间地址映射到设备，不需要通过内核，这在编程上很方便，但是存在同步上的问题，开销也很大。</li>
+<li>DMA: 分配物理地址连续的DMA buffer，设备直接对buffer进行读写，读写过程不需要CPU接入，通过中断同步。</li>
+</ul>
+<p>在<code>kgsl_ioctl_gpuobj_import</code>中有如下实现:</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">long</span> <span class="title">kgsl_ioctl_gpuobj_import</span><span class="params">(struct kgsl_device_private *dev_priv,</span></span></span><br><span class="line"><span class="params"><span class="function">		<span class="keyword">unsigned</span> <span class="keyword">int</span> cmd, <span class="keyword">void</span> *data)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ...</span><br><span class="line">	<span class="keyword">if</span> (param-&gt;type == KGSL_USER_MEM_TYPE_ADDR)</span><br><span class="line">		ret = _gpuobj_map_useraddr(dev_priv-&gt;device, <span class="keyword">private</span>-&gt;pagetable,</span><br><span class="line">			entry, param);</span><br><span class="line">	<span class="keyword">else</span>	<span class="comment">//DMA</span></span><br><span class="line">		ret = _gpuobj_map_dma_buf(dev_priv-&gt;device, <span class="keyword">private</span>-&gt;pagetable,</span><br><span class="line">			entry, param, &amp;fd);</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="android设备中的DMA创建"><a href="#android设备中的DMA创建" class="headerlink" title="android设备中的DMA创建"></a>android设备中的DMA创建</h2><p>在android中，和设备共享一个DMA buffer的过程如下:</p>
+<ul>
+<li>用户使用ion分配器创建一个DMA buffer。在android中，ion是DMA的具体实现，它们二者有相同含义。如<code>KGSL_USER_MEM_TYPE_DMABUF</code>和<code>KGSL_USER_MEM_TYPE_ION</code>含义相同</li>
+<li>ion分配器从ion heap中分配内存，该区域是<code>kmalloc</code>系列分配函数对应的heap。</li>
+<li>ion分配器返回一个文件描述符fp作为handle给用户。</li>
+<li>用户将fp作为参数，通过ioctl调用传给设备。</li>
+<li>设备通过<code>dma_buf_get</code>和<code>dma_buf_attach</code>获取并把自身attach到DMA buffer。</li>
+<li>设备通过<code>dma_buf_map_attachment</code>获取DMA buffer的<code>sg_table</code>，<code>sg_table</code>是用来存储不连续的内存块列表的，DMA可以通过<code>sg_table</code>去读写不连续的物理地址。</li>
+<li>最终，用户和设备均可访问该DMA buffer，这时用户需要通过<code>DMA_BUF_IOCTL_SYNC</code>来保证二者的同步。</li>
+</ul>
+<p>DMA buffer使用结束后，使用<code>dma_buf_unmap_attachment</code>, <code>dma_buf_detach</code>, 和<code>dma_buf_put</code>释放dma。</p>
+<h2 id="成因"><a href="#成因" class="headerlink" title="成因"></a>成因</h2><p>kgsl通过<code>dma_buf_unmap_attachment</code>获取了用户提供的DMA buffer的<code>sg_table</code>，并将其存放在<code>kgsl_mem_entry-&gt;memdesc.sgt</code>中:</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">kgsl_setup_dma_buf</span><span class="params">(struct kgsl_device *device,</span></span></span><br><span class="line"><span class="params"><span class="function">				struct kgsl_pagetable *pagetable,</span></span></span><br><span class="line"><span class="params"><span class="function">				struct kgsl_mem_entry *entry,</span></span></span><br><span class="line"><span class="params"><span class="function">				struct dma_buf *dmabuf)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	...</span><br><span class="line">	sg_table = <span class="built_in">dma_buf_map_attachment</span>(attach, DMA_BIDIRECTIONAL);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (<span class="built_in">IS_ERR_OR_NULL</span>(sg_table)) &#123;</span><br><span class="line">		ret = <span class="built_in">PTR_ERR</span>(sg_table);</span><br><span class="line">		<span class="keyword">goto</span> out;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">dma_buf_unmap_attachment</span>(attach, sg_table, DMA_BIDIRECTIONAL);</span><br><span class="line"></span><br><span class="line">	meta-&gt;table = sg_table;</span><br><span class="line">	entry-&gt;priv_data = meta;</span><br><span class="line">	entry-&gt;memdesc.sgt = sg_table;</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在<code>IOCTL_KGSL_MAP_USER_MEM</code>中，直接从用户提供内存的页表来创建一个新的sgt:</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">memdesc_sg_virt</span><span class="params">(struct kgsl_memdesc *memdesc, <span class="keyword">unsigned</span> <span class="keyword">long</span> useraddr)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	...</span><br><span class="line">	ret = <span class="built_in">sg_alloc_table_from_pages</span>(memdesc-&gt;sgt, pages, npages,</span><br><span class="line">					<span class="number">0</span>, memdesc-&gt;size, GFP_KERNEL);</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当ioctl中某一步失败时，<code>kgsl_mem_entry</code>会被销毁，销毁逻辑取决于内存类型有所不同，DMA的内存类型的某一个失败时的销毁过程如下:</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">long</span> <span class="title">kgsl_ioctl_gpuobj_import</span><span class="params">(struct kgsl_device_private *dev_priv,</span></span></span><br><span class="line"><span class="params"><span class="function">		<span class="keyword">unsigned</span> <span class="keyword">int</span> cmd, <span class="keyword">void</span> *data)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ...</span><br><span class="line">	ret = <span class="built_in">kgsl_mem_entry_attach_process</span>(dev_priv-&gt;device, <span class="keyword">private</span>, entry);</span><br><span class="line">	<span class="keyword">if</span> (ret)</span><br><span class="line">		<span class="keyword">goto</span> unmap;</span><br><span class="line">	...</span><br><span class="line"></span><br><span class="line">unmap:</span><br><span class="line">	<span class="keyword">if</span> (<span class="built_in">kgsl_memdesc_usermem_type</span>(&amp;entry-&gt;memdesc) == KGSL_MEM_ENTRY_ION) &#123;</span><br><span class="line">		<span class="built_in">kgsl_destroy_ion</span>(entry-&gt;priv_data);</span><br><span class="line">		entry-&gt;memdesc.sgt = <span class="literal">NULL</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">kgsl_sharedmem_free</span>(&amp;entry-&gt;memdesc);</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在<code>kgsl_sharedmem_free</code>中，对sgt进行了释放:</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">kgsl_sharedmem_free</span><span class="params">(struct kgsl_memdesc *memdesc)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ...</span><br><span class="line">	<span class="keyword">if</span> (memdesc-&gt;sgt) &#123;</span><br><span class="line">		<span class="built_in">sg_free_table</span>(memdesc-&gt;sgt);</span><br><span class="line">		<span class="built_in">kfree</span>(memdesc-&gt;sgt);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (memdesc-&gt;pages)</span><br><span class="line">		<span class="built_in">kgsl_free</span>(memdesc-&gt;pages);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>问题出在<code>kgsl_ioctl_gpuobj_import</code>中，这个调用原本用来处理DMA buffer的的共享，但是它也处理了用户传入的参数表示内存类型是用户地址<code>KGSL_USER_MEM_TYPE_ADDR</code>的情况:</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">long</span> <span class="title">kgsl_ioctl_gpuobj_import</span><span class="params">(struct kgsl_device_private *dev_priv,</span></span></span><br><span class="line"><span class="params"><span class="function">		<span class="keyword">unsigned</span> <span class="keyword">int</span> cmd, <span class="keyword">void</span> *data)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ...</span><br><span class="line">	<span class="keyword">if</span> (param-&gt;type == KGSL_USER_MEM_TYPE_ADDR)</span><br><span class="line">		ret = _gpuobj_map_useraddr(dev_priv-&gt;device, <span class="keyword">private</span>-&gt;pagetable,</span><br><span class="line">			entry, param);</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		ret = _gpuobj_map_dma_buf(dev_priv-&gt;device, <span class="keyword">private</span>-&gt;pagetable,</span><br><span class="line">			entry, param, &amp;fd);</span><br><span class="line">   	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>而在<code>_gpuobj_map_useraddr</code>中，最后调用了<code>kgsl_setup_useraddr</code>，该函数中首先尝试将用户提供的地址当作DMA buffer进行分配，失败后再继续进行正常的用户地址映射共享。</p>
+<p>这时，如果用户提供的地址是由ion分配器分配的，就会创建一个ION类型的内存对象，该ION类型的<code>memdesc-&gt;sgt</code>指向DMA的sgt。</p>
+<p>梳理一下，用户使用<code>kgsl_ioctl_gpuobj_import</code>调用，且参数表明提供的内存是<code>KGSL_USER_MEM_TYPE_ADDR</code>，但实际地址是ion分配器分配的DMA内存时，最终会创建一个ION类型的<code>memdesc</code>，其sgt指向DMA的sgt。这时<code>kgsl_mem_entry_attach_process</code>若出错，会进入unmap中，这时会直接释放掉<code>memdesc-&gt;sgt</code>。而实际上DMA buffer还没有被释放，在4.12内核版本后，仍可以通过<code>dma_buf_attachment</code>获取sgt:</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">ion_dma_buf_attach</span><span class="params">(struct dma_buf *dmabuf, struct device *dev,</span></span></span><br><span class="line"><span class="params"><span class="function">                                struct dma_buf_attachment *attachment)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ...</span><br><span class="line">        table = <span class="built_in">dup_sg_table</span>(buffer-&gt;sg_table);</span><br><span class="line">    ...</span><br><span class="line">        a-&gt;table = table;                          <span class="comment">//&lt;---- c. duplicated table stored in attachment, which is the output of dma_buf_attach in a.</span></span><br><span class="line">    ...</span><br><span class="line">        <span class="built_in">mutex_lock</span>(&amp;buffer-&gt;lock);</span><br><span class="line">        <span class="built_in">list_add</span>(&amp;a-&gt;list, &amp;buffer-&gt;attachments);  <span class="comment">//&lt;---- d. attachment got added to dma_buf::attachments</span></span><br><span class="line">        <span class="built_in">mutex_unlock</span>(&amp;buffer-&gt;lock);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>ion_dma_buf_attach</code>将sgt放在了<code>dma_buf_attachment-&gt;a-&gt;sgt</code>中。此后，若再调用<code>DMA_BUF_IOCTL_SYNC</code>，会导致该sgt被使用:</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> __ion_dma_buf_begin_cpu_access(struct dma_buf *dmabuf,</span><br><span class="line">                                          <span class="keyword">enum</span> dma_data_direction direction,</span><br><span class="line">                                          <span class="keyword">bool</span> sync_only_mapped)</span><br><span class="line">&#123;</span><br><span class="line">    ...</span><br><span class="line">        <span class="built_in">list_for_each_entry</span>(a, &amp;buffer-&gt;attachments, list) &#123;</span><br><span class="line">        ...</span><br><span class="line">                <span class="keyword">if</span> (sync_only_mapped)</span><br><span class="line">                        tmp = <span class="built_in">ion_sgl_sync_mapped</span>(a-&gt;dev, a-&gt;table-&gt;sgl,        <span class="comment">//&lt;--- use-after-free of a-&gt;table</span></span><br><span class="line">                                                  a-&gt;table-&gt;nents,</span><br><span class="line">                                                  &amp;buffer-&gt;vmas,</span><br><span class="line">                                                  direction, <span class="literal">true</span>);</span><br><span class="line">                <span class="keyword">else</span></span><br><span class="line">                        <span class="built_in">dma_sync_sg_for_cpu</span>(a-&gt;dev, a-&gt;table-&gt;sgl,              <span class="comment">//&lt;--- use-after-free of a-&gt;table</span></span><br><span class="line">                                            a-&gt;table-&gt;nents, direction);</span><br><span class="line">            ...</span><br><span class="line">                &#125;</span><br><span class="line">        &#125;</span><br><span class="line">...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这造成了一个UAF漏洞，利用该漏洞可以造成任意代码执行。</p>
+]]></content>
+      <categories>
+        <category>笔记</category>
+      </categories>
+      <tags>
+        <tag>GPU</tag>
+        <tag>高通</tag>
+        <tag>CVE</tag>
       </tags>
   </entry>
 </search>
