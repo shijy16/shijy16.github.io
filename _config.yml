@@ -103,7 +103,7 @@ theme: next
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
   type: git
-  repository: https://github.com/shijy16/shijy16.github.io
+  repository: git@github.com:shijy16/shijy16.github.io.git
   branch: main
 
 search:
