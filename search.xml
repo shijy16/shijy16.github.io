@@ -930,4 +930,87 @@ fastboot flash boot xxx.img
         <tag>Android</tag>
       </tags>
   </entry>
+  <entry>
+    <title>android源码编译及真机内核驱动调试记录</title>
+    <url>/2021/09/14/%E9%85%8D%E7%BD%AE/android%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E5%8F%8A%E7%9C%9F%E6%9C%BA%E5%86%85%E6%A0%B8%E9%A9%B1%E5%8A%A8%E8%B0%83%E8%AF%95%E8%AE%B0%E5%BD%95/</url>
+    <content><![CDATA[<h1 id="安卓源码下载"><a href="#安卓源码下载" class="headerlink" title="安卓源码下载"></a>安卓源码下载</h1><p>安卓源码可以参照安卓官方的<a href="https://source.android.com/setup/build/downloading?hl=zh-cn">说明</a>到google仓库下载，但是我挂梯子网络也不行，下不下来，就到了<a href="https://mirrors.tuna.tsinghua.edu.cn/help/AOSP/">tuna</a>，按照上面的指引，同步了repo。</p>
+<h5 id="获取版本号"><a href="#获取版本号" class="headerlink" title="获取版本号"></a>获取版本号</h5><p>下载之前第一件事是确定好自己要下载的android源码的build id和标记，这个主要由手机型号决定，代号、标记和Build号的对应关系到<a href="https://mirrors.tuna.tsinghua.edu.cn/git/AOSP/platform/manifest">这里</a>查，我查到我要下载的Pixel 3的2020年左右的源码Build号是<code>QQ2A.200501.001.B2</code>，标记是<code>android-10.0.0_r35</code>。</p>
+<h5 id="下载源码"><a href="#下载源码" class="headerlink" title="下载源码"></a>下载源码</h5><p>按照tuna的指引，先下载它提供的repo并更新tuna镜像源:</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">curl https://mirrors.tuna.tsinghua.edu.cn/git/git-repo -o repo</span><br><span class="line">chmod +x repo</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:/path/to/repo</span><br><span class="line"><span class="built_in">export</span> REPO_URL=<span class="string">&#x27;https://mirrors.tuna.tsinghua.edu.cn/git/git-repo&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>跳过这一步可能会出现网络问题。接下来下载自己需要版本的源码:</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">mkdir android-10.0.0_r35</span><br><span class="line"><span class="built_in">cd</span> android-10.0.0_r35</span><br><span class="line">repo init -u https://mirrors.tuna.tsinghua.edu.cn/git/AOSP/platform/manifest -b android-10.0.0_r35</span><br><span class="line">repo sync</span><br></pre></td></tr></table></figure>
+
+<p>这里需要很长时间来下载，总大小大概90+G。</p>
+<h5 id="下载驱动二进制"><a href="#下载驱动二进制" class="headerlink" title="下载驱动二进制"></a>下载驱动二进制</h5><p>只有源码的话，还缺少了一些硬件的驱动和库，这些东西不是开源的，需要单独下载，到<a href="https://developers.google.cn/android/drivers">google</a>官网下载对应Build ID的两个binary，一个是google的，一个是qualcomm的。</p>
+<h1 id="安卓源码编译"><a href="#安卓源码编译" class="headerlink" title="安卓源码编译"></a>安卓源码编译</h1><p>主要参考<a href="https://source.android.com/source/building.html">编译指示</a>进行编译。</p>
+<h5 id="拷贝专有二进制文件"><a href="#拷贝专有二进制文件" class="headerlink" title="拷贝专有二进制文件"></a>拷贝专有二进制文件</h5><p>首先将之前下载的两个驱动二进制文件解压，解压后是两个脚本，把这两个脚本拷贝到源码根目录下，直接运行即可，它们会将对应的文件安装在<code>vendor/</code>目录下。</p>
+<h5 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h5><p>首先清理之前的编译输出:</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">make clobber</span><br></pre></td></tr></table></figure>
+
+<p>然后初始化环境:</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="built_in">source</span> build/envsetup.sh</span><br></pre></td></tr></table></figure>
+
+<p>设置编译目标，使用<code>lunch</code>命令查看可选的目标，由于我的目标是代号<code>blueline</code>的pixel手机，选择了<code>blueline</code>的debug版本。</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">lunch aosp_blueline-eng</span><br></pre></td></tr></table></figure>
+
+<p>编译可选目标如下:</p>
+<table>
+<thead>
+<tr>
+<th>Buildtype</th>
+<th align="center">用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>user</td>
+<td align="center">有限的权限；适合一般用户</td>
+</tr>
+<tr>
+<td>userdebug</td>
+<td align="center">类似user模式，但有root权限和debug能力，适合debug</td>
+</tr>
+<tr>
+<td>eng</td>
+<td align="center">带有额外的debug工具的开发配置。</td>
+</tr>
+</tbody></table>
+<p>然后开始编译:</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">make -j4</span><br></pre></td></tr></table></figure>
+
+<p>我一开始开8个线程在i7-9700上编译了三个多小时，98%左右因为占用CPU过高被kill了，然后开4个线程继续编译，一直报错，是<code>PYTHONPATH</code>和<code>PYTHONHOME</code>相关的错误，尝试把它们unset了没用，于是又只<code>make clobber</code>清理了一遍，然后从头开4个线程编译，然后还是失败了好多次。后面装了个python2，并把<code>/usr/bin/python</code>链接到python2后，编译终于成功了。</p>
+<h5 id="刷写系统"><a href="#刷写系统" class="headerlink" title="刷写系统"></a>刷写系统</h5><p>在源码目录下，<code>source build/env_setup.sh</code>后，依次执行:</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">adb reboot bootloader <span class="comment">#进入bootloader</span></span><br><span class="line">fastboot flashall -w <span class="comment">#刷写</span></span><br></pre></td></tr></table></figure>
+
+<p>等待刷写成功就行了。</p>
+<h2 id="内核调试"><a href="#内核调试" class="headerlink" title="内核调试"></a>内核调试</h2><p>一开始问一个学长怎么搞android kernel debug，他说要焊一个串口出来，当年他就是因为要焊串口才放弃了…后来他给我发了一个<a href="https://www.trendmicro.com/en_us/research/17/a/practical-android-debugging-via-kgdb.html">blog</a>，大意是用tcp连接adb，然后关掉usb端口，用usb端口来给kgdb通信。我在关闭usb的那一步卡住:</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> 0 &gt; /sys/class/android_usb/android0/<span class="built_in">enable</span></span><br></pre></td></tr></table></figure>
+
+<p>我这个版本的kernel并没有这个关闭usb的选项，power/level也只有auto和on两个状态…遂转为手动调试。</p>
+<p>另外在用<code>cat /proc/kallsyms</code>打印内核符号地址时，发现打印出地址全是0，查了一下发现需要改<code>/proc/sys/kernel/kptr_restrict</code>变量，该变量有三个取值:</p>
+<table>
+<thead>
+<tr>
+<th>2</th>
+<th>内核将符号地址打印为全0, root和普通用户都没有权限</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>root用户有权限读取, 普通用户没有权限</td>
+</tr>
+<tr>
+<td>0</td>
+<td>root和普通用户都可以读取</td>
+</tr>
+</tbody></table>
+<p><code>echo 0 &gt; /proc/sys/kernel/kptr_restrict</code>即可。</p>
+]]></content>
+      <categories>
+        <category>配置</category>
+      </categories>
+      <tags>
+        <tag>Androi,内核</tag>
+      </tags>
+  </entry>
 </search>
