@@ -7,7 +7,16 @@ redirect_from:
   - /about.html
 ---
 
-<div markdown="0" style="text-align: center; margin-bottom: 1em;">
+<style>
+  .page__content h2 { font-size: 1.25em; margin-top: 1.5em; }
+  .page__content p, .page__content li { font-size: 0.95em; line-height: 1.5; }
+  .page__content .pub-item { margin-bottom: 0.8em; }
+  .page__content .pub-title { font-weight: 600; }
+  .page__content .pub-venue { font-style: italic; color: #555; }
+  .page__content .pub-authors { color: #555; font-size: 0.92em; }
+</style>
+
+<div markdown="0" style="text-align: center; margin-bottom: 0.5em;">
   <h1>Jingyi Shi</h1>
 </div>
 
@@ -22,7 +31,7 @@ redirect_from:
   <a href="https://github.com/shijy16">GitHub</a>
 </div>
 
-# About Me
+## About Me
 
 I am a Ph.D. candidate at the Institute of Information Engineering, Chinese Academy of Sciences, advised by Prof. Wei Huo and Prof. Yang Xiao.
 
@@ -30,23 +39,24 @@ I received my B.Eng. degree from the Department of Computer Science and Technolo
 
 My research focuses on the security of modern software and AI ecosystems, with particular interests in software supply chain security, AI agents for security, and AI infrastructure security.
 
-# Research Interests
+## Research Interests
 
 * **Software Supply Chain Security**
 * **AI Agents for Security**
 * **AI Infrastructure Security**
 
-# Publications
+## Publications
 
 {% for post in site.publications reversed %}
-<p>
-  {{ post.title }}. In <i>{{ post.venue }}</i>.<br/>
-  {{ post.authors | replace: "Jingyi Shi", "**Jingyi Shi**" | markdownify | remove: "<p>" | remove: "</p>" }}
-</p>
+<div class="pub-item">
+  <div class="pub-title">{{ post.title }}. <span class="pub-venue">{{ post.venue }}.</span></div>
+  <div class="pub-authors">{{ post.authors | replace: "Jingyi Shi", "<strong>Jingyi Shi</strong>" }}</div>
+</div>
 {% endfor %}
 
-# Honors and Recognition
+## Honors and Recognition
 
 * Listed in the **Google Bug Hunters Hall of Fame**.
 * Listed in the **Intel Security Researcher Hall of Fame**.
 * Invited to participate in **Google BugSWAT 2023** in Tokyo, Japan.
+
