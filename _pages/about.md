@@ -38,10 +38,11 @@ My research focuses on the security of modern software and AI ecosystems, with p
 
 # Publications
 
-{% include base_path %}
-
 {% for post in site.publications reversed %}
-  {% include archive-single.html %}
+<p>
+  {{ post.title }}. In <i>{{ post.venue }}</i>.<br/>
+  {{ post.authors | replace: "Jingyi Shi", "**Jingyi Shi**" | markdownify | remove: "<p>" | remove: "</p>" }}
+</p>
 {% endfor %}
 
 # Honors and Recognition
