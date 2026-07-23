@@ -1,6 +1,6 @@
 ---
 permalink: /
-title: "Jingyi Shi"
+title: "About Me"
 author_profile: true
 redirect_from:
   - /about/
@@ -15,10 +15,6 @@ redirect_from:
   .page__content .pub-venue { font-style: italic; color: #555; }
   .page__content .pub-authors { color: #555; font-size: 0.92em; }
 </style>
-
-<div markdown="0" style="text-align: center; margin-bottom: 0.5em;">
-  <h1>Jingyi Shi</h1>
-</div>
 
 <div markdown="0" style="text-align: center; margin-bottom: 1em;">
   <em>Ph.D. Candidate</em><br/>
