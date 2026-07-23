@@ -27,8 +27,6 @@ redirect_from:
   <a href="https://github.com/shijy16">GitHub</a>
 </div>
 
-## About Me
-
 I am a Ph.D. candidate at the Institute of Information Engineering, Chinese Academy of Sciences, advised by Prof. Wei Huo and Prof. Yang Xiao.
 
 I received my B.Eng. degree from the Department of Computer Science and Technology at Tsinghua University in 2020. In 2025, I was a visiting Ph.D. student at Nanyang Technological University, advised by Prof. Yang Liu.
